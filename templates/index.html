@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador de material didàctic - Primària</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #C62828;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            color: #C62828;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        header p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-top: 8px;
+        }
+        .formulari {
+            background: #f8f8f8;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .formulari label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .formulari input, .formulari select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        .formulari input:focus, .formulari select:focus {
+            outline: none;
+            border-color: #C62828;
+        }
+        .fila {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        .btn-generar {
+            background: #C62828;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.2s;
+            width: 100%;
+        }
+        .btn-generar:hover {
+            background: #b71c1c;
+            transform: scale(1.02);
+        }
+        .btn-generar:disabled {
+            background: #999;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        .loading.visible { display: block; }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #C62828;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .material { display: none; margin-top: 30px; }
+        .material.visible { display: block; }
+        .seccio {
+            background: #fafafa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 5px solid #C62828;
+        }
+        .seccio h2 {
+            color: #C62828;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .seccio h3 {
+            color: #555;
+            font-size: 1.2rem;
+            margin: 15px 0 10px 0;
+        }
+        .seccio p { margin-bottom: 10px; }
+        .seccio ul, .seccio ol { margin: 10px 0 10px 25px; }
+        .seccio li { margin-bottom: 5px; }
+        .btn-pdf {
+            background: #2E7D32;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        .btn-pdf:hover { background: #1b5e20; }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ef9a9a;
+            display: none;
+        }
+        .error.visible { display: block; }
+        @media (max-width: 768px) {
+            .fila { grid-template-columns: 1fr; }
+            .container { padding: 20px; }
+            header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Creador de material didàctic</h1>
+            <p>Genera paquets complets de classe per a Primària en segons</p>
+        </header>
+
+        <div class="formulari">
+            <div class="fila">
+                <div>
+                    <label for="curs">📌 Curs</label>
+                    <select id="curs">
+                        <option value="1">1r de Primària</option>
+                        <option value="2">2n de Primària</option>
+                        <option value="3">3r de Primària</option>
+                        <option value="4">4t de Primària</option>
+                        <option value="5">5è de Primària</option>
+                        <option value="6">6è de Primària</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="area">📖 Àrea</label>
+                    <select id="area">
+                        <option value="Matemàtiques">Matemàtiques</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="durada">⏱️ Durada</label>
+                    <select id="durada">
+                        <option value="30">30 minuts</option>
+                        <option value="45" selected>45 minuts</option>
+                        <option value="60">60 minuts</option>
+                        <option value="90">90 minuts</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-top: 10px;">
+                <label for="tema">✏️ Tema</label>
+                <input type="text" id="tema" placeholder="Ex: Les fraccions, Els cossos geomètrics, La mesura del temps..." />
+            </div>
+            <button class="btn-generar" id="btnGenerar" onclick="generarMaterial()">🚀 Generar material</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generant el material... Això pot trigar uns segons.</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="material" id="material">
+            <div id="contingut"></div>
+            <button class="btn-pdf" onclick="descarregarPDF()">📄 Descarregar com a PDF</button>
+        </div>
+    </div>
+
+    <script>
+        let materialGenerat = '';
+
+        function generarMaterial() {
+            const curs = document.getElementById('curs').value;
+            const area = document.getElementById('area').value;
+            const tema = document.getElementById('tema').value;
+            const durada = document.getElementById('durada').value;
+
+            if (!tema.trim()) {
+                alert('Si us plau, escriu un tema.');
+                return;
+            }
+
+            const btn = document.getElementById('btnGenerar');
+            const loading = document.getElementById('loading');
+            const material = document.getElementById('material');
+            const error = document.getElementById('error');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Generant...';
+            loading.classList.add('visible');
+            material.classList.remove('visible');
+            error.classList.remove('visible');
+
+            fetch('/generar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ curs: curs, area: area, tema: tema, durada: durada })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.classList.remove('visible');
+                btn.disabled = false;
+                btn.textContent = '🚀 Generar material';
+
+                if (data.error) {
+                    error.textContent = '❌ ' + data.error;
+                    error.classList.add('visible');
+                    return;
+                }
+
+                materialGenerat = data.material;
+                document.getElementById('contingut').innerHTML = formatarMaterial(data.material);
+                material.classList.add('visible');
+                material.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            })
+            .catch(error => {
+                loading.classList.remove('visible');
+                btn.disabled = false;
+                btn.textContent = '🚀 Generar material';
+                error.textContent = '❌ Error de connexió. Torna-ho a provar.';
+                error.classList.add('visible');
+                console.error('Error:', error);
+            });
+        }
+
+        function formatarMaterial(text) {
+            let html = text
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            const seccions = [
+                'EXPLICACIÓ', 'FITXA', 'ACTIVITATS', 'COMPRENSIÓ',
+                'VERSIÓ FÀCIL', 'VERSIÓ AMPLIACIÓ', 'SOLUCIONARI'
+            ];
+
+            seccions.forEach(seccio => {
+                const regex = new RegExp(`(${seccio})([\\s\\S]*?)(?=${seccions.join('|')}|$)`, 'gi');
+                html = html.replace(regex, (match, titol, contingut) => {
+                    return `<div class="seccio"><h2>${titol}</h2><p>${contingut.trim()}</p></div>`;
+                });
+            });
+
+            return `<div>${html}</div>`;
+        }
+
+        function descarregarPDF() {
+            if (!materialGenerat) {
+                alert('Primer has de generar material.');
+                return;
+            }
+
+            const finestra = window.open('', '_blank');
+            finestra.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Material didàctic</title>
+                    <style>
+                        body { font-family: 'Segoe UI', sans-serif; padding: 40px; max-width: 900px; margin: 0 auto; }
+                        h1 { color: #C62828; text-align: center; border-bottom: 3px solid #C62828; padding-bottom: 20px; }
+                        .seccio { background: #fafafa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 5px solid #C62828; }
+                        h2 { color: #C62828; }
+                        .footer { text-align: center; margin-top: 40px; color: #999; font-size: 0.9rem; border-top: 1px solid #ddd; padding-top: 20px; }
+                        @media print { .seccio { page-break-inside: avoid; } }
+                    </style>
+                </head>
+                <body>
+                    <h1>📚 Material didàctic</h1>
+                    ${document.getElementById('contingut').innerHTML}
+                    <div class="footer">Generat amb Creador de material didàctic</div>
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 500);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            finestra.document.close();
+        }
+
+        document.getElementById('tema').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') generarMaterial();
+        });
+    </script>
+</body>
+</html>
